@@ -9,12 +9,12 @@ Class {
 
 { #category : #tests }
 AoCDay1Test >> testFinalFrequencyPart1 [
-	self assert: (AoCDay1 new finalFrequency = 578)
+	self assert: (AoCDay1 new finalFrequency) equals: 578
 ]
 
 { #category : #tests }
 AoCDay1Test >> testFirstRepeatedFrequency [
-	self assert: (AoCDay1 new firstRepeatedFrequency = 82516)
+	self assert: (AoCDay1 new firstRepeatedFrequency) equals: 82516
 ]
 
 { #category : #tests }

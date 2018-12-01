@@ -60,48 +60,32 @@ Class {
 { #category : #accessing }
 AoCDay1 >> finalFrequency [
 	| initialFrequency currentFrequency |
-
 	initialFrequency := 0.
 	currentFrequency := initialFrequency.
-
-	self shifts do: [ :shift |
-		
-		currentFrequency := currentFrequency + shift
-		 ].
-	
-	^currentFrequency 
+	self shifts do: [ :shift | currentFrequency := currentFrequency + shift ].
+	^ currentFrequency
 ]
 
 { #category : #accessing }
 AoCDay1 >> firstRepeatedFrequency [
-
 	| repeatedFrequencyCandidates initialFrequency currentFrequency resultingFrequency |
-
 	repeatedFrequencyCandidates := Dictionary new.
-	
-
 	initialFrequency := 0.
 	currentFrequency := initialFrequency.
-
-	1000 timesRepeat: [ 
-		self shifts do: [ :shift |
-		
-		
-		resultingFrequency := currentFrequency + shift.
-		
-		repeatedFrequencyCandidates at: resultingFrequency ifPresent: [ ^ resultingFrequency  ] ifAbsentPut: [ 1 ].
-		
-		currentFrequency := resultingFrequency.
-		
-
-		].
-
-].
-	repeatedFrequencyCandidates at: resultingFrequency ifPresent: [ ^ currentFrequency  ] ifAbsentPut: [ 1 ].
-	
+	1000
+		timesRepeat: [ self shifts
+				do: [ :shift | 
+					resultingFrequency := currentFrequency + shift.
+					repeatedFrequencyCandidates
+						at: resultingFrequency
+						ifPresent: [ ^ resultingFrequency ]
+						ifAbsentPut: [ 1 ].
+					currentFrequency := resultingFrequency ] ].
+	repeatedFrequencyCandidates
+		at: resultingFrequency
+		ifPresent: [ ^ currentFrequency ]
+		ifAbsentPut: [ 1 ].
 	Error signal: 'No duplicate frequency'
-	
-
 ]
 
 { #category : #accessing }
