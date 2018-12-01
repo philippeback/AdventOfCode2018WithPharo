@@ -5,3 +5,6 @@ https://adventofcode.com/2018
 
 Pharo Leaderboard
 https://adventofcode.com/2018/leaderboard/private/view/274925
+
+Discussions on Discord in the Pharo #coding-contests channel.
+
