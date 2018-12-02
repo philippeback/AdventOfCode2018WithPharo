@@ -56,7 +56,7 @@ AoCDay2 >> asGroupsOfTwoAndThree: letterGroupsOfBoxes [
 { #category : #accessing }
 AoCDay2 >> boxesIds [
 
-	^ self puzzleInput lines
+	^ self puzzleInput lines asOrderedCollection
 ]
 
 { #category : #accessing }
@@ -78,10 +78,41 @@ AoCDay2 >> checksumFromGroupsOfTwoAndThree: someQualifiedGroupsOfBoxes [
 	^ twos size * threes size
 ]
 
+{ #category : #accessing }
+AoCDay2 >> commonLettersOfPrototypeBoxes [
+	| prototypeBoxes commonLetters first second |
+	prototypeBoxes := self prototypeBoxes.
+	first := prototypeBoxes first.
+	second := prototypeBoxes second.
+	commonLetters := first withIndexSelect: [ :letter :index | letter = (second at: index) ].
+	^commonLetters
+]
+
 { #category : #private }
 AoCDay2 >> groupsOfBoxes [
 	^ self boxesIds
 		collect: [ :boxId | boxId -> (boxId groupedBy: [ :letter | letter ]) ]
+]
+
+{ #category : #private }
+AoCDay2 >> prototypeBoxes [
+	
+	| comparisons boxesIds |
+	
+	boxesIds := self boxesIds.
+	
+	comparisons := boxesIds copy collect: [ :boxId |
+		boxesIds collect: [ :each |  each howManyMatch: boxId ]
+		].
+	
+	comparisons withIndexDo: [ :howManyMatches :boxIndex |
+		howManyMatches withIndexDo: [ :howManyMatch :otherBoxIndex |
+			howManyMatch = 25 ifTrue: [ ^ { boxesIds at: boxIndex. boxesIds at: otherBoxIndex } ]
+			]].
+
+	^nil	
+		
+	
 ]
 
 { #category : #accessing }

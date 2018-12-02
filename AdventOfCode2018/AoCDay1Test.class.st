@@ -14,6 +14,7 @@ AoCDay1Test >> testFinalFrequencyPart1 [
 
 { #category : #tests }
 AoCDay1Test >> testFirstRepeatedFrequency [
+	self timeLimit: 1 minute.
 	self assert: (AoCDay1 new firstRepeatedFrequency) equals: 82516
 ]
 

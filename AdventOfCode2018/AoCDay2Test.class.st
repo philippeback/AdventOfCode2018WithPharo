@@ -25,3 +25,8 @@ AoCDay2Test >> testBoxesIds [
 AoCDay2Test >> testChecksum [
 	self assert: (subject checksum) equals: 7533
 ]
+
+{ #category : #tests }
+AoCDay2Test >> testCommonLettersOfPrototypeBoxes [
+	self assert: (subject commonLettersOfPrototypeBoxes) equals: 'mphcuasvrnjzzkbgdtqeoylva'
+]
