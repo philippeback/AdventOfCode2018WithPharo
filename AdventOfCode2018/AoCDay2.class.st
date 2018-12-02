@@ -51,9 +51,6 @@ Both parts of this puzzle are complete! They provide two gold stars: **
 Class {
 	#name : #AoCDay2,
 	#superclass : #Object,
-	#instVars : [
-		'qualifiedGroupsOfBoxes'
-	],
 	#category : #AdventOfCode2018
 }
 
@@ -83,7 +80,7 @@ AoCDay2 >> boxesIds [
 
 { #category : #accessing }
 AoCDay2 >> checksum [
-	| letterGroupsOfBoxes |
+	| letterGroupsOfBoxes qualifiedGroupsOfBoxes |
 	letterGroupsOfBoxes := self groupsOfBoxes.
 	qualifiedGroupsOfBoxes := self asGroupsOfTwoAndThree: letterGroupsOfBoxes.
 
@@ -93,9 +90,9 @@ AoCDay2 >> checksum [
 { #category : #private }
 AoCDay2 >> checksumFromGroupsOfTwoAndThree: someQualifiedGroupsOfBoxes [
 	| twos threes |
-	twos := qualifiedGroupsOfBoxes
+	twos := someQualifiedGroupsOfBoxes
 		select: [ :group | (group value at: #groupOfTwo) isNotNil ].
-	threes := qualifiedGroupsOfBoxes
+	threes := someQualifiedGroupsOfBoxes
 		select: [ :group | (group value at: #groupOfThree) isNotNil ].
 	^ twos size * threes size
 ]
