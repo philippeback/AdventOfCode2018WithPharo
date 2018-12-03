@@ -8,3 +8,5 @@ https://adventofcode.com/2018/leaderboard/private/view/274925
 
 Discussions on Discord in the Pharo #coding-contests channel.
 
+Listen to 
+https://www.youtube.com/watch?v=RcVnqFxWMDM for some cool skill boost!
