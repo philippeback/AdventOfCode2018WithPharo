@@ -13,6 +13,26 @@ AoCDay3 class >> answers [
 	self new answers inspect
 ]
 
+{ #category : #examples }
+AoCDay3 class >> visualization [
+	<example>
+
+| c model nonOverlapping |
+c := TRCanvas new.
+model := AoCDay3 new.
+nonOverlapping := model answers at: #part2_non_overlapping_claim.
+
+model claims do: [ :claimSpec |
+	 
+	| shape claim|
+	
+	claim := claimSpec value.
+		shape := TRBoxShape new from: (claim at: 1)@(claim at: 2) extent: (claim at: 3)@(claim at: 4).
+		shape color: ((nonOverlapping key = claimSpec key) ifTrue: [ Color green lighter ] ifFalse: [  (Color red alpha: 0.3) ]).
+		c addShape: shape ].
+c inspect
+]
+
 { #category : #acccessing }
 AoCDay3 >> answers [
 	| claims filler fabric startLeft startTop width height counter sharedSurface nonOverlappingChecker nonOverlappingClaim |
@@ -78,7 +98,8 @@ AoCDay3 >> answers [
 					width.
 					height} ].
 	^ {(#part1_in_two_or_more_claims -> sharedSurface).
-	(#part2_non_overlapping_claim -> nonOverlappingClaim first key)} asDictionary
+	(#part2_non_overlapping_claim_id -> nonOverlappingClaim first key).
+	(#part2_non_overlapping_claim -> nonOverlappingClaim first)} asDictionary
 ]
 
 { #category : #acccessing }
