@@ -16,6 +16,12 @@ Class {
 	#category : #AdventOfCode2018
 }
 
+{ #category : #examples }
+AoCDay4 class >> run [
+	<example>
+	self new part1And2 inspect
+]
+
 { #category : #'as yet unclassified' }
 AoCDay4 >> asTokenized: aTimeline [
 
@@ -46,6 +52,35 @@ AoCDay4 >> guardBeginsShiftRegex [
 	^ guardBeginsShiftRegex ifNil: [ guardBeginsShiftRegex := 'Guard \#(\d+).+' asRegex ]
 
 
+]
+
+{ #category : #'as yet unclassified' }
+AoCDay4 >> part1And2 [
+	| engine puzzle eventsTimeline guards guardActivities sleeping asleepMinutesMap sleepingRange guardsSleepingSchedule sleepingLeaderboard |
+	engine := self.
+	"puzzle := engine puzzleInputSample."
+	puzzle := engine puzzleInput.
+	eventsTimeline := engine asTokenized: (engine timeline: puzzle).
+	guards := (eventsTimeline collect: [ :e | e at: #guardId ]) asSet asSortedCollection.
+	guardsSleepingSchedule := guards
+		collect: [ :guard | 
+			guardActivities := eventsTimeline select: [ :e | (e at: #guardId) = guard ].
+			sleeping := guardActivities select: [ :e | {#FALLS_ASLEEP . #WAKES_UP} anySatisfy: [ :state | state = (e at: #event) ] ].
+			asleepMinutesMap := OrderedDictionary new.
+			0 to: 59 do: [ :minute | asleepMinutesMap at: minute put: 0 ].
+			sleeping
+				withIndexDo: [ :each :index | 
+					| minute event startedSleeping |
+					minute := each at: #minute.
+					event := each at: #event.
+					event = #WAKES_UP
+						ifTrue: [ startedSleeping := (sleeping at: index - 1) at: #minute.
+							sleepingRange := startedSleeping to: minute - 1.
+							sleepingRange do: [ :m | asleepMinutesMap at: m put: (asleepMinutesMap at: m) + 1 ] ] ].
+			guard -> asleepMinutesMap ].
+	sleepingLeaderboard := guardsSleepingSchedule sort: [ :gssA :gssB | gssA value values sum > gssB value values sum ].
+	^{(#part1 -> (sleepingLeaderboard collect: [ :e | e value values sum -> e ])).
+	(#part2 -> (sleepingLeaderboard collect: [ :e | e value values max -> e ]))} asDictionary
 ]
 
 { #category : #accessing }
