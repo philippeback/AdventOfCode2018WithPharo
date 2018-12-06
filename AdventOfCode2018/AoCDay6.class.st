@@ -7,19 +7,7 @@ Class {
 { #category : #examples }
 AoCDay6 class >> part1 [
 	<example>
-	| selector engine coordinates minCoordinatedGrid filteredOutGrid areas computationDuration |
-	selector := #puzzleInputSample.
-	selector := #puzzleInput.
-	engine := AoCDay6 new.
-	coordinates := engine coordinates: (engine perform: selector).
-	computationDuration := [ minCoordinatedGrid := engine
-		computeCoordinatesAtMinimumDistanceFromCoordinates: coordinates.
-	filteredOutGrid := engine filterOutItemsOfInfiniteSurfaces: minCoordinatedGrid.
-	areas := engine countAreas: filteredOutGrid ] timeToRun.
-	{(#computationDuration -> computationDuration).
-	(#computed -> filteredOutGrid).
-	(#areas -> areas).
-	(#maxarea -> areas values max)} asDictionary inspect
+	self new part1 inspect
 ]
 
 { #category : #examples }
@@ -28,12 +16,31 @@ AoCDay6 class >> part2 [
 	| selector engine coordinates computationDuration regionSize |
 	selector := #puzzleInputSample.
 	selector := #puzzleInput.
-	engine := AoCDay6 new.
+	engine := self new.
 	coordinates := engine coordinates: (engine perform: selector).
 	computationDuration := [ regionSize := engine computeDistancesForCoordinates: coordinates within: 10000.
 	 ] timeToRun.
 	{(#computationDuration -> computationDuration).
 	(#regionSize -> regionSize)} asDictionary inspect
+]
+
+{ #category : #examples }
+AoCDay6 class >> visualization [
+	<example>
+
+| canvas model nonOverlapping |
+canvas := TRCanvas new.
+model := AoCDay6 new.
+nonOverlapping := model part1 at: #computed.
+
+nonOverlapping withIndicesDo: [ :data :r :c |
+	 
+	| shape |
+	
+		shape := TRBoxShape new from: (c*2)@(r*2) extent: 1@1.
+		shape color: (data ifNil: [ Color black ] ifNotNil: [  (Color red alpha: 0.3) ]).
+		canvas addShape: shape ].
+canvas inspect
 ]
 
 { #category : #initialize }
@@ -171,6 +178,24 @@ AoCDay6 >> filterOutItemsOfInfiniteSurfaces: aMinCoordinatedGrid [
 AoCDay6 >> manhattanDistanceBetween: aPoint and: anotherPoint [
 
 	^ (aPoint x - anotherPoint x) abs + (aPoint y - anotherPoint y) abs
+]
+
+{ #category : #'as yet unclassified' }
+AoCDay6 >> part1 [ 
+
+| selector engine coordinates minCoordinatedGrid filteredOutGrid areas computationDuration |
+	selector := #puzzleInputSample.
+	selector := #puzzleInput.
+	engine := self.
+	coordinates := engine coordinates: (engine perform: selector).
+	computationDuration := [ minCoordinatedGrid := engine
+		computeCoordinatesAtMinimumDistanceFromCoordinates: coordinates.
+	filteredOutGrid := engine filterOutItemsOfInfiniteSurfaces: minCoordinatedGrid.
+	areas := engine countAreas: filteredOutGrid ] timeToRun.
+	^{(#computationDuration -> computationDuration).
+	(#computed -> filteredOutGrid).
+	(#areas -> areas).
+	(#maxarea -> areas values max)} asDictionary
 ]
 
 { #category : #'as yet unclassified' }
