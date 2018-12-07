@@ -9,15 +9,15 @@ Class {
 
 { #category : #'code-critics' }
 ManifestAdventOfCode class >> ruleRBBadMessageRuleV1FalsePositive [
-	^ #(#(#(#RGMethodDefinition #(#AoCDay7 #part1 #false)) #'2018-12-07T23:19:31.722842+01:00') )
+	^ #(#(#(#RGMethodDefinition #(#AoCDay7Part1 #part1 #false)) #'2018-12-07T23:19:31.722842+01:00') )
 ]
 
 { #category : #'code-critics' }
 ManifestAdventOfCode class >> ruleRBCollectionProtocolRuleV1FalsePositive [
-	^ #(#(#(#RGMethodDefinition #(#AoCDay7 #walkFrom: #false)) #'2018-12-07T22:17:19.991769+01:00') )
+	^ #(#(#(#RGMethodDefinition #(#AoCDay7Part1 #walkFrom: #false)) #'2018-12-07T22:17:19.991769+01:00') )
 ]
 
 { #category : #'code-critics' }
 ManifestAdventOfCode class >> ruleRBNotEliminationRuleV1FalsePositive [
-	^ #(#(#(#RGMethodDefinition #(#AoCDay7Node #unvisitedSuccessors #false)) #'2018-12-07T21:40:58.860769+01:00') )
+	^ #(#(#(#RGMethodDefinition #(#AoCDay7NodePart1 #unvisitedSuccessors #false)) #'2018-12-07T21:40:58.860769+01:00') )
 ]

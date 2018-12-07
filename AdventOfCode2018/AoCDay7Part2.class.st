@@ -1,57 +1,28 @@
-"
-Day 7: The Sum of Its Parts
-
-Step C must be finished before step A can begin.
-Step C must be finished before step F can begin.
-Step A must be finished before step B can begin.
-Step A must be finished before step D can begin.
-Step B must be finished before step E can begin.
-Step D must be finished before step E can begin.
-Step F must be finished before step E can begin.
-
-Visually, these requirements look like this:
-
-
-  -->A--->B--
- /    \      \
-C      -->D----->E
- \           /
-  ---->F-----
-
-Your first goal is to determine the order in which the steps should be completed. If more than one step is ready, choose the step which is first alphabetically. In this example, the steps would be completed as follows:
-
-    Only C is available, and so it is done first.
-    Next, both A and F are available. A is first alphabetically, so it is done next.
-    Then, even though F was available earlier, steps B and D are now also available, and B is the first alphabetically of the three.
-    After that, only D and F are available. E is not available because only some of its prerequisites are complete. Therefore, D is completed next.
-    F is the only choice, so it is done next.
-    Finally, E is completed.
-
-So, in this example, the correct order is CABDFE.
-
-In what order should the steps in your instructions be completed?
-"
 Class {
-	#name : #AoCDay7,
+	#name : #AoCDay7Part2,
 	#superclass : #Object,
+	#instVars : [
+		'ticks',
+		'workers'
+	],
 	#category : #AdventOfCode2018
 }
 
 { #category : #examples }
-AoCDay7 class >> part1 [
+AoCDay7Part2 class >> run [
 	<example>
-	self new part1 inspect
+	self new run inspect
 ]
 
 { #category : #'as yet unclassified' }
-AoCDay7 >> findStart: someNodes [
+AoCDay7Part2 >> findStart: someNodes [
 	"Assuming there is only one start. But there are more than one in the problem..."
 
 	^ someNodes select: [ :node | node predecessors isEmpty ]
 ]
 
 { #category : #'as yet unclassified' }
-AoCDay7 >> instructions: anInputString [
+AoCDay7Part2 >> instructions: anInputString [
 	^ anInputString lines
 		collect: [ :line | 
 			(line splitOn: Character space)
@@ -61,7 +32,7 @@ AoCDay7 >> instructions: anInputString [
 ]
 
 { #category : #'as yet unclassified' }
-AoCDay7 >> link: nodesDict accordingTo: instructions [
+AoCDay7Part2 >> link: nodesDict accordingTo: instructions [
 	instructions
 		do: [ :instruction | 
 			| to from |
@@ -72,47 +43,25 @@ AoCDay7 >> link: nodesDict accordingTo: instructions [
 ]
 
 { #category : #'as yet unclassified' }
-AoCDay7 >> nodes: someInstructions [
+AoCDay7Part2 >> nodes: someInstructions [
 
 	| nodeIds |
 	nodeIds := ((someInstructions collect: [ :instruction |
 		instruction first, instruction second ]) joinUsing: '') asSet.
 	
-	^ nodeIds collect: [ :nodeId | AoCDay7Node withNodeId: nodeId ]
+	^ nodeIds collect: [ :nodeId | AoCDay7NodePart2 withNodeId: nodeId ]
 	
 ]
 
 { #category : #'as yet unclassified' }
-AoCDay7 >> nodesDict: someNodes [
+AoCDay7Part2 >> nodesDict: someNodes [
 
 	^ (someNodes collect: [ :node | node nodeId -> node  ]) asDictionary
 	
 ]
 
 { #category : #'as yet unclassified' }
-AoCDay7 >> part1 [
-	| selector input instructions nodes nodesDict startNode tracks  sequence s |
-	selector := #puzzleInputSample.
-	selector := #puzzleInput.
-	input := self perform: selector.
-	instructions := self instructions: input.
-	nodes := self nodes: instructions.
-	nodesDict := self nodesDict: nodes.
-	self link: nodesDict accordingTo: instructions.
-	"nodesDict inspect."
-
-	
-	tracks := self walkFrom: nodes.
-	
-	s := String new writeStream.
-	tracks do: [ :node | s nextPut: (node nodeId) ].
-	sequence := s contents.
-	
-	^ { nodes. startNode. tracks. sequence}
-]
-
-{ #category : #'as yet unclassified' }
-AoCDay7 >> puzzleInput [
+AoCDay7Part2 >> puzzleInput [
 	^ 'Step U must be finished before step A can begin.
 Step F must be finished before step Z can begin.
 Step B must be finished before step J can begin.
@@ -218,7 +167,7 @@ Step P must be finished before step R can begin.'
 ]
 
 { #category : #'as yet unclassified' }
-AoCDay7 >> puzzleInputSample [
+AoCDay7Part2 >> puzzleInputSample [
 ^ 'Step C must be finished before step A can begin.
 Step C must be finished before step F can begin.
 Step A must be finished before step B can begin.
@@ -229,7 +178,36 @@ Step F must be finished before step E can begin.'
 ]
 
 { #category : #'as yet unclassified' }
-AoCDay7 >> walkFrom: someNodes [
+AoCDay7Part2 >> run [
+	| selector input instructions nodes nodesDict startNode tracks  sequence s |
+	selector := #puzzleInputSample.
+	selector := #puzzleInput.
+	input := self perform: selector.
+	instructions := self instructions: input.
+	nodes := self nodes: instructions.
+	nodesDict := self nodesDict: nodes.
+	self link: nodesDict accordingTo: instructions.
+	nodesDict inspect.
+
+	
+	tracks := self walkFrom: nodes.
+	
+	s := String new writeStream.
+	tracks do: [ :node | s nextPut: (node nodeId) ].
+	sequence := s contents.
+	
+	^ { nodes. startNode. tracks. sequence}
+]
+
+{ #category : #'as yet unclassified' }
+AoCDay7Part2 >> tick [ 
+	ticks := ticks + 1.
+	
+
+]
+
+{ #category : #'as yet unclassified' }
+AoCDay7Part2 >> walkFrom: someNodes [
 	| availableTargets path addNodeToPath waitingList currentNode availableTargetsFinder startNodes |
 	path := OrderedCollection new.
 	waitingList := SortedCollection sortBlock: [:a :b | a nodeId < b nodeId ].
@@ -247,4 +225,12 @@ AoCDay7 >> walkFrom: someNodes [
 			waitingList ifNotEmpty: [ 
 			currentNode := waitingList removeFirst]
 			ifEmpty: [ ^ path  ]  ].
+]
+
+{ #category : #'as yet unclassified' }
+AoCDay7Part2 >> workers: aNumberOfWorkers [
+
+	workers := (1 to: aNumberOfWorkers) collect: [ :i | AoCDay7Worker usingId: i ]
+	
+
 ]

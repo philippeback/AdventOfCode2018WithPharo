@@ -1,5 +1,5 @@
 Class {
-	#name : #AoCDay7Node,
+	#name : #AoCDay7NodePart1,
 	#superclass : #Object,
 	#instVars : [
 		'successors',
@@ -11,34 +11,34 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-AoCDay7Node class >> withNodeId: aCharacter [ 
+AoCDay7NodePart1 class >> withNodeId: aCharacter [ 
 	^self new nodeId: aCharacter; yourself
 ]
 
 { #category : #accessing }
-AoCDay7Node >> = anObject [
+AoCDay7NodePart1 >> = anObject [
 	^ nodeId = anObject nodeId
 ]
 
 { #category : #accessing }
-AoCDay7Node >> addPredecessor: aNode [
+AoCDay7NodePart1 >> addPredecessor: aNode [
 
 	self predecessors add: aNode
 ]
 
 { #category : #accessing }
-AoCDay7Node >> addSuccessor: aNode [
+AoCDay7NodePart1 >> addSuccessor: aNode [
 
 	self successors add: aNode
 ]
 
 { #category : #accessing }
-AoCDay7Node >> hash [
+AoCDay7NodePart1 >> hash [
 	^ nodeId asCharacter asciiValue 
 ]
 
 { #category : #initialization }
-AoCDay7Node >> initialize [ 
+AoCDay7NodePart1 >> initialize [ 
 
 	successors := Set new.
 	predecessors := Set new.
@@ -49,39 +49,39 @@ AoCDay7Node >> initialize [
 ]
 
 { #category : #accessing }
-AoCDay7Node >> isAVailable [
+AoCDay7NodePart1 >> isAVailable [
 
 	^predecessors ifEmpty: [ true ] ifNotEmpty: [ predecessors reduce: [ :a :b | a isAvailable & b isAvailable ] ]
 ]
 
 { #category : #accessing }
-AoCDay7Node >> isAvailable [
+AoCDay7NodePart1 >> isAvailable [
 	^predecessors ifEmpty: [ true ] ifNotEmpty: [ (predecessors collect: [:each | each isVisited ]) reduce: [ :a :b | a & b ] ] 
 ]
 
 { #category : #accessing }
-AoCDay7Node >> isVisited [
+AoCDay7NodePart1 >> isVisited [
 
 	^visited
 ]
 
 { #category : #accessing }
-AoCDay7Node >> nodeId [
+AoCDay7NodePart1 >> nodeId [
 	^ nodeId
 ]
 
 { #category : #accessing }
-AoCDay7Node >> nodeId: anObject [
+AoCDay7NodePart1 >> nodeId: anObject [
 	nodeId := anObject
 ]
 
 { #category : #accessing }
-AoCDay7Node >> predecessors [
+AoCDay7NodePart1 >> predecessors [
 	^ predecessors
 ]
 
 { #category : #accessing }
-AoCDay7Node >> printOn: aStream [
+AoCDay7NodePart1 >> printOn: aStream [
 
 	^ aStream
 		nextPutAll: 'AoCDay7Node (';
@@ -96,7 +96,7 @@ AoCDay7Node >> printOn: aStream [
 ]
 
 { #category : #accessing }
-AoCDay7Node >> showMe [
+AoCDay7NodePart1 >> showMe [
 
 	^ (String new writeStreamDo: [ : s | 
 		s
@@ -113,21 +113,21 @@ AoCDay7Node >> showMe [
 ]
 
 { #category : #accessing }
-AoCDay7Node >> successors [
+AoCDay7NodePart1 >> successors [
 	^ successors
 ]
 
 { #category : #accessing }
-AoCDay7Node >> unvisitedAvailableSuccessors [
+AoCDay7NodePart1 >> unvisitedAvailableSuccessors [
 	^ successors select: [ :successor | (successor isVisited not) & (successor isAvailable) ]
 ]
 
 { #category : #accessing }
-AoCDay7Node >> unvisitedSuccessors [
+AoCDay7NodePart1 >> unvisitedSuccessors [
 	^ successors select: [ :each | each isVisited not ]
 ]
 
 { #category : #accessing }
-AoCDay7Node >> visit [
+AoCDay7NodePart1 >> visit [
 	visited := true
 ]
