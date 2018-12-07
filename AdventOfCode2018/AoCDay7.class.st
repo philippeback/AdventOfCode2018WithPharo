@@ -45,9 +45,9 @@ AoCDay7 class >> part1 [
 
 { #category : #'as yet unclassified' }
 AoCDay7 >> findStart: someNodes [
-	"Assuming there is only one start"
+	"Assuming there is only one start. But there are more than one in the problem..."
 
-	^ someNodes detect: [ :node | node predecessors isEmpty ]
+	^ someNodes select: [ :node | node predecessors isEmpty ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -67,7 +67,8 @@ AoCDay7 >> link: nodesDict accordingTo: instructions [
 			| to from |
 			from := nodesDict at: instruction first first.
 			to := nodesDict at: instruction second first.
-			from successors add: to ]
+			from successors addIfNotPresent: to.
+			to predecessors addIfNotPresent: from ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -90,7 +91,7 @@ AoCDay7 >> nodesDict: someNodes [
 
 { #category : #'as yet unclassified' }
 AoCDay7 >> part1 [
-	| selector input instructions nodes nodesDict startNode tracks |
+	| selector input instructions nodes nodesDict startNode tracks  sequence s |
 	selector := #puzzleInputSample.
 	selector := #puzzleInput.
 	input := self perform: selector.
@@ -98,12 +99,16 @@ AoCDay7 >> part1 [
 	nodes := self nodes: instructions.
 	nodesDict := self nodesDict: nodes.
 	self link: nodesDict accordingTo: instructions.
+	"nodesDict inspect."
+
 	
-	startNode := self findStart: nodesDict.
+	tracks := self walkFrom: nodes.
 	
-	tracks := self walkFrom: startNode.
+	s := String new writeStream.
+	tracks do: [ :node | s nextPut: (node nodeId) ].
+	sequence := s contents.
 	
-	^ { nodes. startNode. tracks}
+	^ { nodes. startNode. tracks. sequence}
 ]
 
 { #category : #'as yet unclassified' }
@@ -224,7 +229,22 @@ Step F must be finished before step E can begin.'
 ]
 
 { #category : #'as yet unclassified' }
-AoCDay7 >> walkFrom: aNode [
-
-	self shouldBeImplemented 
+AoCDay7 >> walkFrom: someNodes [
+	| availableTargets path addNodeToPath waitingList currentNode availableTargetsFinder startNodes |
+	path := OrderedCollection new.
+	waitingList := SortedCollection sortBlock: [:a :b | a nodeId < b nodeId ].
+	addNodeToPath := [ :node | 	path add: node.	node visit ].
+	availableTargetsFinder := [ :node | node unvisitedAvailableSuccessors asSortedCollection: [ :a :b | a nodeId < b nodeId ] ].
+	{  path. waitingList } inspect.
+	startNodes := self findStart: someNodes.
+	(startNodes asSortedCollection: [ :a :b | a nodeId < b nodeId ]) reversed do: [ :each | waitingList addIfNotPresent: each ].
+	currentNode := waitingList removeFirst.
+	150
+		timesRepeat: [ 
+			addNodeToPath value: currentNode.
+			
+			(availableTargets := availableTargetsFinder value: currentNode) ifNotEmpty: [ :targets | targets reversed do: [ :each | waitingList addIfNotPresent: each ] ].
+			waitingList ifNotEmpty: [ 
+			currentNode := waitingList removeFirst]
+			ifEmpty: [ ^ path  ]  ].
 ]
