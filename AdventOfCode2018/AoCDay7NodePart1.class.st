@@ -7,7 +7,7 @@ Class {
 		'nodeId',
 		'visited'
 	],
-	#category : #AdventOfCode2018
+	#category : #'AdventOfCode2018-Day7Part1'
 }
 
 { #category : #'as yet unclassified' }
@@ -119,7 +119,7 @@ AoCDay7NodePart1 >> successors [
 
 { #category : #accessing }
 AoCDay7NodePart1 >> unvisitedAvailableSuccessors [
-	^ successors select: [ :successor | (successor isVisited not) & (successor isAvailable) ]
+	^ successors select: [ :successor | (successor isVisited not) & (successor isAvailable) & (self isCompleted) ]
 ]
 
 { #category : #accessing }

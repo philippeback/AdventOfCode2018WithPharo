@@ -34,7 +34,7 @@ In what order should the steps in your instructions be completed?
 Class {
 	#name : #AoCDay7Part1,
 	#superclass : #Object,
-	#category : #AdventOfCode2018
+	#category : #'AdventOfCode2018-Day7Part1'
 }
 
 { #category : #examples }

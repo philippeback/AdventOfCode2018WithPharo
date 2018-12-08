@@ -9,7 +9,7 @@ Class {
 
 { #category : #'code-critics' }
 ManifestAdventOfCode class >> ruleRBBadMessageRuleV1FalsePositive [
-	^ #(#(#(#RGMethodDefinition #(#AoCDay7Part1 #part1 #false)) #'2018-12-07T23:19:31.722842+01:00') )
+	^ #(#(#(#RGMethodDefinition #(#AoCDay7Part1 #part1 #false)) #'2018-12-07T23:19:31.722842+01:00') #(#(#RGMethodDefinition #(#AoCDay7Part2 #run #false)) #'2018-12-08T00:31:41.656842+01:00') )
 ]
 
 { #category : #'code-critics' }
