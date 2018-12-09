@@ -88,15 +88,16 @@ AoCDay8 >> childrenNodesCountOf: aVector [
 { #category : #accessing }
 AoCDay8 >> data [
 	<gtExample>
-	^ (self puzzleInputMedium splitOn: Character space) collect: [ :each | each asInteger ]
+	^ (self puzzleInputFull splitOn: Character space) collect: [ :each | each asInteger ]
 ]
 
 { #category : #examples }
 AoCDay8 >> digInto: aVector root: aRootVector level: aDepthLevel startIndex: aStartIndex tree: aTree [
 	"returns index for next treespec"
 
-	| currentVector childrenCount metadataSize   levelPrefix   sibling newTreeNode metadata |
+	| logIt currentVector childrenCount metadataSize   levelPrefix   sibling newTreeNode metadata |
 	
+	logIt := false.
 	Processor yield.
 	
 
@@ -127,23 +128,26 @@ AoCDay8 >> digInto: aVector root: aRootVector level: aDepthLevel startIndex: aSt
 	
 	levelPrefix := String new: aDepthLevel withAll: $-.
 
+	logIt ifTrue: [ 
 	('+{1} {2} digging into: {3} startIndex: {4}' format: { levelPrefix. aDepthLevel.  self limited: aVector.  aStartIndex }) logCr.
 
 	(' +{1} children: {2} metadataSize {3}' format: { levelPrefix. childrenCount. metadataSize }) logCr.
-	
+	].
 	childrenCount = 0 
 		ifTrue: [ 
 			| nextIndex |
 			nextIndex := aStartIndex + 2 + metadataSize.
-			(' +{1} Leaf Node. NextIndex: {2}' format: {levelPrefix. nextIndex}) logCr.
+			logIt ifTrue: [(' +{1} Leaf Node. NextIndex: {2}' format: {levelPrefix. nextIndex}) logCr].
+			newTreeNode endIndex: nextIndex - 1.
 			^ nextIndex ] 
 		ifFalse: [ 
 			| childStartIndex |
 			childStartIndex := aStartIndex + 2.
 			1 to: childrenCount do: [ :childIndex |
 				sibling := aRootVector copyFrom: childStartIndex to: aRootVector size.	
-				(' +{1} child {4} starting at: {2}: {3} } ' format: {levelPrefix. childStartIndex. self limited: sibling. childIndex}) logCr.
-				childStartIndex := self digInto: sibling root: aRootVector level: aDepthLevel + 1 startIndex: childStartIndex tree:  newTreeNode].
+				logIt ifTrue: [(' +{1} child {4} starting at: {2}: {3} } ' format: {levelPrefix. childStartIndex. self limited: sibling. childIndex}) logCr].
+				newTreeNode endIndex: (	childStartIndex := self digInto: sibling root: aRootVector level: aDepthLevel + 1 startIndex: childStartIndex tree:  newTreeNode) - 1].
+			newTreeNode endIndex: childStartIndex + metadataSize -1. "For the last child"
 			^ childStartIndex + metadataSize
 	 ]
 ]
@@ -177,7 +181,7 @@ AoCDay8 >> limited: aVector [
 
 { #category : #examples }
 AoCDay8 >> maxIterations [
-	^ 1000
+	^ 25000
 ]
 
 { #category : #accessing }
@@ -222,13 +226,18 @@ AoCDay8 >> resetRecorder [
 { #category : #examples }
 AoCDay8 >> runPart1 [
 	<gtExample>
-	| nodesInfo meta root |
+	| nodesInfo data root |
 	self resetRecorder.
-	root := AoCDay8Node new metadataSize: 0;yourself.
+	root := AoCDay8Node new.
+	root makeRoot.
 	self digInto: self data copy root: self data copy level: 0 startIndex: 1 tree: root.
 	nodesInfo := self recorder.
-	"meta := nodesInfo collect: [ :nodeInfo | Halt now. nodeInfo first: 2 ]"
-	^ {self recorder. root subTrees first}
+
+	data := self data.
+	nodesInfo do: [ :nodeInfo | 
+		 nodeInfo extractedMetadata: (data copyFrom: (nodeInfo endIndex - nodeInfo metadataSize +1 ) to: (nodeInfo endIndex))].
+	
+	^ { self recorder. root subTrees first. (nodesInfo collect: [ :nodeInfo | nodeInfo extractedMetadata ]) flattened sum}
 ]
 
 { #category : #accessing }

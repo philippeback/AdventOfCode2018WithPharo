@@ -7,7 +7,9 @@ Class {
 		'startIndex',
 		'metadata',
 		'childrenCount',
-		'metadataSize'
+		'metadataSize',
+		'endIndex',
+		'extractedMetadata'
 	],
 	#category : #AdventOfCode2018
 }
@@ -20,6 +22,26 @@ AoCDay8Node >> childrenCount [
 { #category : #accessing }
 AoCDay8Node >> childrenCount: anObject [
 	childrenCount := anObject
+]
+
+{ #category : #accessing }
+AoCDay8Node >> endIndex [
+	^ endIndex
+]
+
+{ #category : #accessing }
+AoCDay8Node >> endIndex: anObject [
+	endIndex := anObject
+]
+
+{ #category : #accessing }
+AoCDay8Node >> extractedMetadata [
+	^ extractedMetadata
+]
+
+{ #category : #accessing }
+AoCDay8Node >> extractedMetadata: anObject [
+	extractedMetadata := anObject
 ]
 
 { #category : #accessing }
