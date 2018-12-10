@@ -102,7 +102,7 @@ AoCDay10 >> render: someData [
 	| shiftedPoints form scaledForm maxX minX maxY minY deltaX deltaY factorY factorX points |
 	
 	factorX := factorY := self factor.
-	
+
 	((someData at: 1) at: 1) in: [ :point | 
 		minX := maxX := point x.
 		minY := maxY := point y ].
@@ -125,13 +125,12 @@ AoCDay10 >> render: someData [
 	
 	deltaX := maxX - minX.
 	deltaY := maxY - minY.
-		
-	points := shiftedPoints collect: [ :point | 
-		(point x //  factorX) @ (point y // factorY) ].
-		
+
+	deltaY < 30 ifTrue: [ factorX := factorY := 1.
+		1 second wait ].	
 		
 	form := (ColorForm extent: (deltaX // factorX + 100)@(deltaY // factorY + 100)  depth: 8) fillBlack; yourself.	
-	points do: [ :each | form colorAt: (each x)@(each y) put: Color green].
+	shiftedPoints do: [ :each | form colorAt: (each x // factorX)@(each y) // factorY put: Color green].
 	scaledForm := form scaledToSize: 900@600.
 	^scaledForm
 	
@@ -151,16 +150,16 @@ AoCDay10 >> runPart1 [
 	w bounds: World clearArea.
 	w openInWorld.
 
-	"self factor: 100.
-	1 to: 450 do: [ :i | 
+	self factor: 100.
+	1 to: 50 do: [ :i | 
 		self nextIteration.
-		currentData := self update: currentData speedUp: 20 ].
+		currentData := self update: currentData speedUp: 100 ].
 	self factor: 50.
 	1 to: 500 do: [ :i | 
 		self nextIteration.
-		currentData := self update: currentData speedUp: 1 ]."
+		currentData := self update: currentData speedUp: 1 ].
 	self factor: 1.
-	1 to: 10000 do: [ :i |
+	1 to: 30 do: [ :i |
 		self nextIteration.
 		renderedForm := self render: currentData.
 		
@@ -177,7 +176,7 @@ AoCDay10 >> runPart1 [
 
 { #category : #'as yet unclassified' }
 AoCDay10 >> update: someData speedUp: speedUp [
-Halt now.
+
 	^ someData withIndexDo: [ :each :index | 
 		| point velocity |
 		point := each first.
