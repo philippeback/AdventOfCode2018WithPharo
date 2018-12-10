@@ -1,6 +1,10 @@
 Class {
 	#name : #AoCDay10,
 	#superclass : #Object,
+	#instVars : [
+		'iteration',
+		'factor'
+	],
 	#category : #AdventOfCode2018
 }
 
@@ -33,7 +37,23 @@ AoCDay10 >> extractPointsFrom: anInput [
 			$>} anySatisfy: [ :each | each = e ] ]) splitOn: $=.
 	parsed at: 2 put: ((parsed at: 2) copyReplaceAll: 'velocity' with: '').
 	parsed removeFirst.
-	^ parsed collect: [ :each | (each splitOn: $,) in: [ :parts | Point x: parts first asInteger y: parts second asInteger ] ]
+	^ parsed collect: [ :each |(each splitOn: $,) in: [ :parts | Point x: parts first asInteger y: parts second asInteger] ]
+]
+
+{ #category : #'as yet unclassified' }
+AoCDay10 >> factor [
+	^factor
+]
+
+{ #category : #'as yet unclassified' }
+AoCDay10 >> factor: aFactor [
+
+	factor := aFactor
+]
+
+{ #category : #'as yet unclassified' }
+AoCDay10 >> nextIteration [
+	^ iteration := (iteration ifNil: [ 0 ]) + 1
 ]
 
 { #category : #'as yet unclassified' }
@@ -79,19 +99,40 @@ position=<-3,  6> velocity=< 2, -1>' lines
 { #category : #'as yet unclassified' }
 AoCDay10 >> render: someData [
 
-	| points xmin xmax ymin ymax shiftedPoints form scaledForm |
-	points := someData collect: [ :each | (each first x /  500) asInteger @ (each first y / 500) asInteger ].
+	| shiftedPoints form scaledForm maxX minX maxY minY deltaX deltaY factorY factorX points |
 	
-	xmin := (points collect: #x) min.
-	xmax := (points collect: #x) max.
-	ymin := (points collect: #y) min.
-	ymax := (points collect: #y) max.
+	factorX := factorY := self factor.
 	
-	shiftedPoints := points collect: [ :each | (each x - xmin + 1)@( each y - ymin + 1)  ].
+	((someData at: 1) at: 1) in: [ :point | 
+		minX := maxX := point x.
+		minY := maxY := point y ].
 	
-	form := (ColorForm extent: (xmax - xmin + 1)@(ymax - ymin + 1)  depth: 32) fillBlack; yourself.
-	shiftedPoints do: [ :each | form colorAt: (each x)@(each y) put: Color green].
-	scaledForm := form scaledToSize: 800@800.
+	someData do: [ :each |
+		| point  px py |
+		point := each first.
+		px := point x.
+		py := point y.
+		minX := minX min: px.
+		maxX := maxX max: px.
+		minY := minY min: py.
+		maxY := maxX max: py.
+		 ].
+			
+	shiftedPoints := someData collect: [ :each | 
+		| point |
+		point := each first.
+		(point x - minX + 10)@( point y - minY + 10)  ].
+	
+	deltaX := maxX - minX.
+	deltaY := maxY - minY.
+		
+	points := shiftedPoints collect: [ :point | 
+		(point x //  factorX) @ (point y // factorY) ].
+		
+		
+	form := (ColorForm extent: (deltaX // factorX + 100)@(deltaY // factorY + 100)  depth: 8) fillBlack; yourself.	
+	points do: [ :each | form colorAt: (each x)@(each y) put: Color green].
+	scaledForm := form scaledToSize: 900@600.
 	^scaledForm
 	
 
@@ -105,30 +146,41 @@ AoCDay10 >> runPart1 [
 	
 	currentData := startingData.
 	m := (Form extent: 800@800) asMorph.
-	w := SystemWindow labelled: 'AoC Day10'.
+	w := StandardWindow labelled: 'AoC Day10'.
 	w addMorph: m frame: (0@0 corner: 1@1).
+	w bounds: World clearArea.
 	w openInWorld.
 
-
-	1 to: 50000 do: [ :i |
-		
+	"self factor: 100.
+	1 to: 450 do: [ :i | 
+		self nextIteration.
+		currentData := self update: currentData speedUp: 20 ].
+	self factor: 50.
+	1 to: 500 do: [ :i | 
+		self nextIteration.
+		currentData := self update: currentData speedUp: 1 ]."
+	self factor: 1.
+	1 to: 10000 do: [ :i |
+		self nextIteration.
 		renderedForm := self render: currentData.
+		
 		"file := ('AoC-Day10-RenderPart1-frame{1}.gif' format:{ ('000', i asString) last: 4 }) asFileReference.
 		file ensureDelete.
 		file binaryWriteStreamDo: [ :out | (GIFReadWriter on: out) nextPutImage: renderedForm ].
 		"
 		m form: renderedForm.
 		World doOneCycle.
-		currentData := self update: currentData ]
+		1 second wait.
+		currentData := self update: currentData speedUp: 1 ]
 	
 ]
 
 { #category : #'as yet unclassified' }
-AoCDay10 >> update: someData [
-
-	^ someData copy collect: [ :each | 
+AoCDay10 >> update: someData speedUp: speedUp [
+Halt now.
+	^ someData withIndexDo: [ :each :index | 
 		| point velocity |
 		point := each first.
 		velocity := each second.
-		OrderedCollection with: (point + velocity) with: velocity ]
+		(someData at: index) at: 1 put: (point + (velocity * speedUp)) ]
 ]
