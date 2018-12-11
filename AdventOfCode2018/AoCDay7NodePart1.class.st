@@ -119,7 +119,7 @@ AoCDay7NodePart1 >> successors [
 
 { #category : #accessing }
 AoCDay7NodePart1 >> unvisitedAvailableSuccessors [
-	^ successors select: [ :successor | (successor isVisited not) & (successor isAvailable) & (self isCompleted) ]
+	^ successors select: [ :successor | (successor isVisited not) & (successor isAvailable)  ]
 ]
 
 { #category : #accessing }
