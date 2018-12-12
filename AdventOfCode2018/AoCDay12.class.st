@@ -66,8 +66,15 @@ AoCDay12 class >> runPart1 [
 ]
 
 { #category : #'as yet unclassified' }
-AoCDay12 >> applyRuleSet: ruleSet to: currentState. [
-	self shouldBeImplemented 
+AoCDay12 >> applyRuleSet: ruleSet to: aCurrentState [
+	| sequence out newStateStream currentState |
+	currentState := '...' , aCurrentState , '...'.	"Need to match beginning and ending #'s"
+	newStateStream := String new writeStream.
+	1 to: currentState size - 4 do: [ :i | 
+		sequence := currentState copyFrom: i to: i + 4.
+		out := ruleSet at: sequence ifAbsent: [ '.' ].
+		newStateStream << out ].
+	^ newStateStream contents
 ]
 
 { #category : #'as yet unclassified' }
@@ -97,7 +104,8 @@ AoCDay12 >> historySample [
 
 { #category : #'as yet unclassified' }
 AoCDay12 >> potsWithPlants: currentState. [
-	self shouldBeImplemented 
+	self flag: #TODO. "Actually compute this"
+	^ -9999
 ]
 
 { #category : #'as yet unclassified' }
@@ -164,23 +172,28 @@ AoCDay12 >> puzzleInputSample [
 
 { #category : #'as yet unclassified' }
 AoCDay12 >> runPart1 [
-
-	| input initialState ruleSet ruleSetString potsWithPlant  currentState newState  |
-	input:= self puzzleInput.
+	
+	| input initialState ruleSet ruleSetString potsWithPlant  currentState newState  states |
+	input:= self puzzleInputSample.
 	
 	initialState := input at: #initialState.
 	ruleSetString := input at: #ruleSet.
-	
+
 	ruleSet := OrderedDictionary new.
 	ruleSetString lines collect: [ :line | (line splitOn: ' => ') in: [ :parsed |
 			ruleSet at: parsed first put: parsed second  ] ].
 	
 	potsWithPlant := 0.
 	currentState := initialState.
+	states := OrderedCollection new.
 	20 timesRepeat: [ 
-		potsWithPlant := potsWithPlant + self potsWithPlants: currentState.
+		states add: currentState.
+		potsWithPlant := potsWithPlant + (self potsWithPlants: currentState).
+
 		newState := self applyRuleSet: ruleSet to: currentState.
 		currentState := newState ].
-	^ { #potsWithPlant -> potsWithPlant. #currentState -> currentState } asOrderedDictionary 
+	
+	(states joinUsing: Character lf) in: [ :content | (FileLocator imageDirectory / 'out12sample.txt') asFileReference writeStreamDo: [ :s | s << content ] ].
+	^ { #potsWithPlant -> potsWithPlant. #currentState -> currentState.#states->states} asOrderedDictionary inspect
 	
 ]
