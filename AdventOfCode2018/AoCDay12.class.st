@@ -65,7 +65,7 @@ Class {
 AoCDay12 class >> runPart1 [
 
 	<example>
-	self new runPart1 inspect
+	self new runPart1 "inspect"
 ]
 
 { #category : #'as yet unclassified' }
@@ -127,6 +127,38 @@ AoCDay12 >> historySample [
 18: ..##.#.#....#####.#.#.#...##...##..##..
 19: .#..###.#..#.#.#######.#.#.#..#.#...#..
 20: .#....##....#####...#######....#.#..##.'
+]
+
+{ #category : #'as yet unclassified' }
+AoCDay12 >> openContents: contents label: aString [
+	| window m |
+	window := (SystemWindow labelled: aString) model: self.
+	m := RubPluggableTextMorph new
+		getTextSelector: #getText;
+		setTextSelector: #clear;
+		on: (RubScrolledTextModel new setText: contents; yourself);
+		withAdornment;
+		withLineNumbers;
+		withColumns;
+		beForSmalltalkScripting.
+	(m rulerNamed: #column) tabWidth: 10.
+	m textArea font: StandardFonts codeFont.
+	window addMorph: m frame: (0 @ 0 corner: 1 @ 1).
+	^ window openInWorld
+]
+
+{ #category : #'as yet unclassified' }
+AoCDay12 >> openContents: contents sLabel: aString [
+	| window m |
+	window := (SystemWindow labelled: aString) model: self.
+	m := RubPluggableTextMorph new
+		getTextSelector: #yourself;
+		"setTextSelector: #clear;"
+		on: contents;
+		beForSmalltalkScripting.
+	m textArea font: StandardFonts codeFont.
+	window addMorph: m frame: (0 @ 0 corner: 1 @ 1).
+	^ window openInWorld
 ]
 
 { #category : #'as yet unclassified' }
@@ -200,7 +232,7 @@ AoCDay12 >> puzzleInputSample [
 { #category : #'as yet unclassified' }
 AoCDay12 >> runPart1 [
 	
-	| input initialState ruleSet ruleSetString potsWithPlant  currentState newState  states sumOfNumbersOfAllPots |
+	| input initialState ruleSet ruleSetString potsWithPlant  currentState newState  states sumOfNumbersOfAllPots textRendition |
 	input:= self puzzleInputSample.
 	
 	initialState := input at: #initialState.
@@ -229,8 +261,13 @@ AoCDay12 >> runPart1 [
 			(currentState at: currentPotIndex) = $# ifTrue: [ sumOfNumbersOfAllPots := sumOfNumbersOfAllPots + (currentPotIndex - 100)]
 		 ].
 	 
+	Halt now.
+	textRendition := states joinUsing: Character cr.
 	
-	(states joinUsing: Character lf) in: [ :content | (FileLocator imageDirectory / 'out12sample.txt') asFileReference writeStreamDo: [ :s | s << content ] ].
-	^ { #potsWithPlant -> potsWithPlant. #currentState -> currentState. #firstPotIndex -> self firstPotIndex. #sumOfNumbersOfAllPots->sumOfNumbersOfAllPots. #states->states } asOrderedDictionary inspect
+	
+	self openContents: textRendition label: 'AoC Day 12 Rendition'.
+	
+	
+	^ { #potsWithPlant -> potsWithPlant. #currentState -> currentState. #firstPotIndex -> self firstPotIndex. #sumOfNumbersOfAllPots->sumOfNumbersOfAllPots. #states->states } asOrderedDictionary
 	
 ]
