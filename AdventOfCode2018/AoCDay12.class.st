@@ -82,6 +82,19 @@ AoCDay12 >> applyRuleSet: ruleSet to: aCurrentState [
 ]
 
 { #category : #'as yet unclassified' }
+AoCDay12 >> applyV2RuleSet: ruleSet to: aCurrentState [
+	| sequence out newStateStream currentState |
+	currentState := aCurrentState .	"Need to match beginning and ending #'s. No rule has more than 3 leading and 4 ending dots in the puzzle"
+	self firstPotIndex: self firstPotIndex.
+	newStateStream := String new writeStream.
+	1 to: currentState size - 4 do: [ :i | 
+		sequence := currentState copyFrom: i to: i + 4.
+		out := ruleSet at: sequence ifAbsent: [ '.' ].
+		newStateStream << out ].
+	^ newStateStream contents
+]
+
+{ #category : #'as yet unclassified' }
 AoCDay12 >> firstPotIndex [
 	^firstPotIndex ifNil: [  firstPotIndex := 0 ]
 ]
@@ -198,14 +211,14 @@ AoCDay12 >> runPart1 [
 			ruleSet at: parsed first put: parsed second  ] ].
 	
 	potsWithPlant := 0.
-	currentState := initialState.
+	currentState := (String new: 100 withAll: $.) , initialState, (String new: 100 withAll: $.).
 	states := OrderedCollection new.
 	states add: currentState.
 	20 timesRepeat: [ 
 		
 		"potsWithPlant := potsWithPlant + (self potsWithPlants: currentState)."
 
-		newState := self applyRuleSet: ruleSet to: currentState.
+		newState := self applyV2RuleSet: ruleSet to: currentState.
 		currentState := newState.
 		states add: currentState].
 	
@@ -213,7 +226,7 @@ AoCDay12 >> runPart1 [
 	sumOfNumbersOfAllPots := 0.
 	
 		1 to: (self firstPotIndex + currentState size) do: [ :currentPotIndex |
-			(currentState at: currentPotIndex) = $# ifTrue: [ sumOfNumbersOfAllPots := sumOfNumbersOfAllPots + currentPotIndex - 1]
+			(currentState at: currentPotIndex) = $# ifTrue: [ sumOfNumbersOfAllPots := sumOfNumbersOfAllPots + (currentPotIndex - 100)]
 		 ].
 	 
 	
