@@ -55,6 +55,9 @@ After 20 generations, what is the sum of the numbers of all pots which contain a
 Class {
 	#name : #AoCDay12,
 	#superclass : #Object,
+	#instVars : [
+		'firstPotIndex'
+	],
 	#category : #AdventOfCode2018
 }
 
@@ -68,13 +71,24 @@ AoCDay12 class >> runPart1 [
 { #category : #'as yet unclassified' }
 AoCDay12 >> applyRuleSet: ruleSet to: aCurrentState [
 	| sequence out newStateStream currentState |
-	currentState := '...' , aCurrentState , '...'.	"Need to match beginning and ending #'s"
+	currentState := '...' , aCurrentState , '....'.	"Need to match beginning and ending #'s. No rule has more than 3 leading and 4 ending dots in the puzzle"
+	self firstPotIndex: self firstPotIndex - 1.
 	newStateStream := String new writeStream.
 	1 to: currentState size - 4 do: [ :i | 
 		sequence := currentState copyFrom: i to: i + 4.
 		out := ruleSet at: sequence ifAbsent: [ '.' ].
 		newStateStream << out ].
 	^ newStateStream contents
+]
+
+{ #category : #'as yet unclassified' }
+AoCDay12 >> firstPotIndex [
+	^firstPotIndex ifNil: [  firstPotIndex := 1 ]
+]
+
+{ #category : #'as yet unclassified' }
+AoCDay12 >> firstPotIndex: anInteger [
+	firstPotIndex := anInteger
 ]
 
 { #category : #'as yet unclassified' }
@@ -173,7 +187,7 @@ AoCDay12 >> puzzleInputSample [
 { #category : #'as yet unclassified' }
 AoCDay12 >> runPart1 [
 	
-	| input initialState ruleSet ruleSetString potsWithPlant  currentState newState  states |
+	| input initialState ruleSet ruleSetString potsWithPlant  currentState newState  states sumOfNumbersOfAllPots |
 	input:= self puzzleInputSample.
 	
 	initialState := input at: #initialState.
@@ -193,7 +207,16 @@ AoCDay12 >> runPart1 [
 		newState := self applyRuleSet: ruleSet to: currentState.
 		currentState := newState ].
 	
+	
+	sumOfNumbersOfAllPots := 0.
+	
+		1 to: (self firstPotIndex + currentState size - 1) do: [ :currentPotIndex |
+			
+			(currentState at: currentPotIndex) = $# ifTrue: [ sumOfNumbersOfAllPots := sumOfNumbersOfAllPots + currentPotIndex ]
+		 ].
+	 
+	
 	(states joinUsing: Character lf) in: [ :content | (FileLocator imageDirectory / 'out12sample.txt') asFileReference writeStreamDo: [ :s | s << content ] ].
-	^ { #potsWithPlant -> potsWithPlant. #currentState -> currentState.#states->states} asOrderedDictionary inspect
+	^ { #potsWithPlant -> potsWithPlant. #currentState -> currentState. #firstPotIndex -> self firstPotIndex. #sumOfNumbersOfAllPots->sumOfNumbersOfAllPots. #states->states } asOrderedDictionary inspect
 	
 ]
